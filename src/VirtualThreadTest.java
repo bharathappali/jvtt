@@ -123,10 +123,10 @@ public class VirtualThreadTest {
         boolean isDone = false;
         try {
         for (Future<String> future: futures)
-            future.get();
+            future.get(); // Blocks the main thread till the jobs are complete
 
         for (Future<String> future: futures) {
-            isDone = future.isDone();
+            isDone = future.isDone(); // Just to make sure the job is done
             if (!isDone) {
                 Thread.sleep(1000);
             }
