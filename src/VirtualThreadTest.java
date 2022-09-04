@@ -18,8 +18,6 @@ import java.util.concurrent.Future;
  *  We are not switching the thread pool in the same run as JIT might have made the application hot and results might
  *  be favourable for the later executor we run
  *
- *  Please use the run_test.sh script to run the test
- *
  *  We use the "--enable-preview" option as virtual threads are part of preview release of JDK 19
  */
 public class VirtualThreadTest {
@@ -32,7 +30,7 @@ public class VirtualThreadTest {
 
         // Number of Threads and Jobs
         int numNativeThreads = 100;
-        int numJobs = 1000;
+        int numJobs = 10000;
 
         String envCheck = System.getenv(useVirtual);
         if (null != envCheck && envCheck.equalsIgnoreCase("true")) {
@@ -54,11 +52,13 @@ public class VirtualThreadTest {
              * Initialising the executor service with fixed number of threads
              */
             executorService = Executors.newFixedThreadPool(numNativeThreads);
+            System.out.println("Native threads count : " + numNativeThreads);
         }
 
         List<VTTJob> vttJobs = new ArrayList<VTTJob>(numJobs);
 
         // Creating Virtual Thread Test Jobs
+        System.out.println("Creating " + numJobs + " Jobs");
         for (int i = 0; i < numJobs; i++) {
             vttJobs.add(new VTTJob());
         }
