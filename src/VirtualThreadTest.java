@@ -36,28 +36,34 @@ public class VirtualThreadTest {
         int maxNativeThreads = 100;
         int maxJobs = 100000;
 
+        // Check if we need to run virtual threads
         String envCheckUseVirtual = System.getenv(useVirtualEnv);
         if (null != envCheckUseVirtual && envCheckUseVirtual.equalsIgnoreCase("true")) {
             isVirtual = true;
         }
 
-        String envCheckNumNativeThreads = System.getenv(numNativeThreadsEnv);
-        if (null != envCheckNumNativeThreads
-                && !envCheckNumNativeThreads.strip().isEmpty()) {
-            try {
-                int parsedInt = Integer.parseInt(envCheckNumNativeThreads);
-                if (parsedInt <= 0 || parsedInt > maxNativeThreads) {
-                    System.out.println("Invalid number of native threads, "
-                            + "should > 0 and <= " + maxNativeThreads
-                            + ", Resetting to default value - " + numNativeThreads);
-                } else {
-                    numNativeThreads = parsedInt;
+        // Check for native threads setting if virtual threads are not opted
+        if (!isVirtual) {
+            String envCheckNumNativeThreads = System.getenv(numNativeThreadsEnv);
+            if (null != envCheckNumNativeThreads
+                    && !envCheckNumNativeThreads.strip().isEmpty()) {
+                try {
+                    int parsedInt = Integer.parseInt(envCheckNumNativeThreads);
+                    if (parsedInt <= 0 || parsedInt > maxNativeThreads) {
+                        System.out.println("Invalid number of native threads, "
+                                + "should > 0 and <= " + maxNativeThreads
+                                + ", Resetting to default value - " + numNativeThreads);
+                    } else {
+                        numNativeThreads = parsedInt;
+                    }
+                } catch (NumberFormatException numberFormatException) {
+                    System.out.println("Invalid number of native threads, Resetting to default value - " + numNativeThreads);
                 }
-            } catch (NumberFormatException numberFormatException) {
-                System.out.println("Invalid number of native threads, Resetting to default value - " + numNativeThreads);
             }
         }
 
+
+        // Check for the setting of num jobs
         String envCheckNumJobs = System.getenv(numJobsEnv);
         if (null != envCheckNumJobs
                 && !envCheckNumJobs.strip().isEmpty()) {
