@@ -23,7 +23,9 @@ import java.util.concurrent.Future;
 public class VirtualThreadTest {
     public static void main(String[] args) {
         // Env var to check
-        final String useVirtual = "USE_VIRTUAL";
+        final String useVirtualEnv = "USE_VIRTUAL";
+        final String numNativeThreadsEnv = "NUM_NATIVE_THREAD";
+        final String numJobsEnv = "NUM_JOBS";
 
         // Setting isVirtual as false to use native threads by default
         boolean isVirtual = false;
@@ -31,10 +33,46 @@ public class VirtualThreadTest {
         // Number of Threads and Jobs
         int numNativeThreads = 100;
         int numJobs = 10000;
+        int maxNativeThreads = 100;
+        int maxJobs = 100000;
 
-        String envCheck = System.getenv(useVirtual);
-        if (null != envCheck && envCheck.equalsIgnoreCase("true")) {
+        String envCheckUseVirtual = System.getenv(useVirtualEnv);
+        if (null != envCheckUseVirtual && envCheckUseVirtual.equalsIgnoreCase("true")) {
             isVirtual = true;
+        }
+
+        String envCheckNumNativeThreads = System.getenv(numNativeThreadsEnv);
+        if (null != envCheckNumNativeThreads
+                && !envCheckNumNativeThreads.strip().isEmpty()) {
+            try {
+                int parsedInt = Integer.parseInt(envCheckNumNativeThreads);
+                if (parsedInt <= 0 || parsedInt > maxNativeThreads) {
+                    System.out.println("Invalid number of native threads, "
+                            + "should > 0 and <= " + maxNativeThreads
+                            + ", Resetting to default value - " + numNativeThreads);
+                } else {
+                    numNativeThreads = parsedInt;
+                }
+            } catch (NumberFormatException numberFormatException) {
+                System.out.println("Invalid number of native threads, Resetting to default value - " + numNativeThreads);
+            }
+        }
+
+        String envCheckNumJobs = System.getenv(numJobsEnv);
+        if (null != envCheckNumJobs
+                && !envCheckNumJobs.strip().isEmpty()) {
+            try {
+                int parsedInt = Integer.parseInt(envCheckNumJobs);
+                if (parsedInt <= 0 || parsedInt > maxJobs) {
+                    System.out.println("Invalid number of jobs, "
+                            + "should > 0 and <= " + maxJobs
+                            + ", Resetting to default value - " + numJobs);
+                } else {
+                    numJobs = parsedInt;
+                }
+            } catch (NumberFormatException numberFormatException) {
+                System.out.println("Invalid number of jobs, Resetting to default value - " + numNativeThreads);
+            }
         }
 
         ExecutorService executorService = null;
