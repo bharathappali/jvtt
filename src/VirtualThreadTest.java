@@ -125,8 +125,12 @@ public class VirtualThreadTest {
         for (Future<String> future: futures)
             future.get();
 
-        for (Future<String> future: futures)
+        for (Future<String> future: futures) {
             isDone = future.isDone();
+            if (!isDone) {
+                Thread.sleep(1000);
+            }
+        }
         System.out.println(" Done.");
         } catch (InterruptedException e) {
             e.printStackTrace();
